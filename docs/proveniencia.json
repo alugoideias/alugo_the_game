@@ -1,0 +1,23 @@
+{
+  "source": "C:\\Users\\renan_happy\\Documents\\ChatGPT\\Alugo Ideias\\output\\aluguito-game\\alugo_the_game-completo\\alugo_the_game",
+  "sha256": "eec02090de80eaa0f9c0c2b6a50bda78cf3a430cf9aea8ffacb9f53b8c30459e",
+  "assets": 63,
+  "functionComparison": {
+    "startStage": true,
+    "buildIntro": true,
+    "buildRuido": true,
+    "buildPressa": true,
+    "buildSilo": true,
+    "buildDona": true,
+    "buildTorta": true,
+    "buildApagao": false,
+    "updateBoss": true,
+    "drawBossGate": true,
+    "renderSelect": true,
+    "useTool": true,
+    "stepSelect": true,
+    "stepAir": true,
+    "update": true
+  },
+  "lines": 2120
+}

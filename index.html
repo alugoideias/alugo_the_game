@@ -597,7 +597,7 @@ function mkEnemy(e){const g=(h)=>(e.fy!=null?e.fy:12)*T-h;const base={on:false,d
 function startStage(id){stageId=id;L=STAGES[id].build();grid=L.g;themeIdx=L.theme;THEME=THEMES[themeIdx];
   hearts=MAXH;battery=100;cp=0;toolsUsed=new Set();if(!L.tall)L.cps.sort((a,b)=>a.x-b.x);refreshOwned();if(id==='intro')tool=0;if(OWN.includes('elo'))L.pickups.forEach(k=>k.got=true);
   const got=save.got[id]||[];L.frags.forEach((f,i)=>{if(got.includes(i))f.prev=true});if((save.bonus||{})[id])L.bonus.forEach(b=>b.prev=true);
-  if(id==='torta')L.air=newAir(true);ens=L.ens.map(mkEnemy);shots=[];mails=[];parts=[];fx=[];items=[];boss=null;arenaLocked=false;respawn();
+  if(id==='torta')L.air=newAir(true);ens=L.ens.map(mkEnemy);shots=[];mails=[];parts=[];fx=[];items=[];boss=null;arenaLocked=false;signText='';need=null;respawn();
   state='play';banner=200;paused=false;musicOn=true;mStep=0;mTempo=.14}
 function restoreErased(){if(!L)return;L.projs=L.projs.filter(g=>{if(g.temp){for(const [x,y] of g.cells)grid[y][x]='#';return false}return true})}
 function respawn(){restoreErased();if(L.air&&!L.air.done&&L.air.t>0)L.air=newAir(false);const C0=L.cps[cp]||L.cps[0];p={x:C0.x*T,y:C0.fy*T-24,w:12,h:24,vx:0,vy:0,onGround:false,face:1,jbuf:0,coyote:0,anim:0,inv:60,cool:0,tcool:0,sx:1,sy:1,swim:false,swimCool:0,slow:0,tangle:0,mark:0,teth:0,ride:null};
@@ -720,9 +720,9 @@ function updateBoss(){const b=boss;if(b.inv>0)b.inv--;if(b.flashW>0)b.flashW--;
       if([60,78,96].concat(b.rage?[114]:[]).includes(b.t))for(let i=-2;i<=2;i++)mails.push({k:'noise',x:b.x+b.w/2,y:b.y+8,vx:i*1.1,vy:-3.4,life:160,w:8,h:8,g:.12});
       if(b.t>(b.rage?126:110))go('idle');grav()}}
 
-  else if(b.type==='pressa'){const sp=b.slow>0?.4:1;if(b.slow>0)b.slow--;b.t+=sp;b.wob=0;
+  else if(b.type==='pressa'){const sp=b.slow>0?.4:1;if(b.slow>0)b.slow--;b.t+=sp;b.wob=0;const hit=k=>b.t-sp<k&&b.t>=k;
     if(b.st==='idle'){b.vx=0;face();const ring=b.t>14;pose(b,1,1,ring?Math.sin(frame*1.7)*.07:0,ring?(Math.random()-.5)*2:0);
-      if(ring&&Math.floor(b.t)%6===0)tone(1760,.03,'square',.02);
+      if(ring&&hit(Math.floor(b.t/6)*6))tone(1760,.03,'square',.02);
       if(b.t>(b.rage?22:36)){const seq=b.rage?['dash','clock','jump','dash','throw','clock']:['dash','jump','clock','dash','throw'];go(seq[b.k++%seq.length]);b.dir=b.face}
       grav()}
     else if(b.st==='dash'){
@@ -741,7 +741,7 @@ function updateBoss(){const b=boss;if(b.inv>0)b.inv--;if(b.flashW>0)b.flashW--;
       while((b.cn||0)<want){b.cn=(b.cn||0)+1;const sx=b.x+b.w/2,sy=b.y+8;mails.push({k:'clock',x:sx-6,y:sy,vx:(p.x+6-sx)/55+(b.cn-1)*.9*b.face,vy:-4.6,life:200,w:12,h:12,g:.16});tone(1500,.08,'square',.04);tone(1000,.08,'square',.04,0,.08)}
       if(b.t>(b.rage?54:42))go('idle');grav()}
     else if(b.st==='throw'){b.vx=0;spin(b,.36*b.face);b.P.tsx=1;b.P.tsy=1;
-      if([8,14,20,26].concat(b.rage?[32]:[]).includes(Math.floor(b.t))){const i=Math.floor(b.t/6);mails.push({k:'hand',x:b.x+b.w/2,y:b.y+10,vx:(p.x-b.x)/60+(i%3-1)*.7,vy:-4.8,life:220,w:10,h:6,g:.15});tone(1200,.05,'square',.03)}
+      const ev=[8,14,20,26].concat(b.rage?[32]:[]).find(hit);if(ev){const i=Math.floor(ev/6);mails.push({k:'hand',x:b.x+b.w/2,y:b.y+10,vx:(p.x-b.x)/60+(i%3-1)*.7,vy:-4.8,life:220,w:10,h:6,g:.15});tone(1200,.05,'square',.03)}
       if(b.t>(b.rage?40:34)){b.P.rot=0;b.P.trot=0;go('idle')}grav()}}
 
   else if(b.type==='silo'){b.t++;if(b.open>0){b.open--;b.shield=false}else b.shield=true;b.wob=0;
@@ -1345,7 +1345,7 @@ function drawPista(cx){const P=L.pista,X=Math.round(P.x*T-cx),Y=12*T;if(X>W+40||
   spr('tp',(frame>>4)%2?'farolete-ligado':'farolete-desligado',X-6,Y-38);spr('tp',(frame>>4)%2?'farolete-ligado':'farolete-desligado',X+P.n*64-18,Y-38);spr('tp','biruta',X+P.n*64-60,Y-46)}
 
 
-function drawBossGate(X){X=Math.round(X);const top=L.tall?0:HUD,open=L.gateOpen||arenaLocked,doorTop=9*T,fl=12*T,wd=52,x0=X-wd/2;
+function drawBossGate(X){X=Math.round(X);const top=L.tall?0:HUD,open=L.gateOpen&&!arenaLocked,doorTop=9*T,fl=12*T,wd=52,x0=X-wd/2;
   R(ctx,'#0a0d1f',x0-2,top,wd+4,fl-top);
   for(let y=top;y<doorTop;y+=16)for(let i=0;i<3;i++){const bx=x0+i*18-((y>>4)%2)*9;R(ctx,'#3a4160',Math.max(x0,bx)+1,y+1,Math.min(17,x0+wd-Math.max(x0,bx)-1),14);R(ctx,'#5b6380',Math.max(x0,bx)+1,y+1,Math.min(17,x0+wd-Math.max(x0,bx)-1),1)}
   for(const px of [x0,x0+wd-10]){R(ctx,'#232a46',px,top,10,fl-top);for(let y=top;y<fl;y+=12)R(ctx,(y>>2)%2?'#f2b632':'#0a0d1f',px+1,y,8,6)}
@@ -1353,9 +1353,9 @@ function drawBossGate(X){X=Math.round(X);const top=L.tall?0:HUD,open=L.gateOpen|
   const lc=open?'#5dfc9a':'#ff5a5a';for(const lx of [x0+14,x0+wd-18]){glow(lx+2,doorTop-7,8,open?'rgba(93,252,154,.7)':'rgba(255,90,90,.7)',.6+.3*Math.sin(frame*.15));R(ctx,lc,lx,doorTop-9,4,4)}
   const by=Math.max(top+26,doorTop-60);R(ctx,'#0a0d1f',X-15,by-15,30,30);R(ctx,'#a87410',X-14,by-14,28,28);R(ctx,'#0e1226',X-12,by-12,24,24);
   ctx.save();ctx.beginPath();ctx.rect(X-12,by-12,24,24);ctx.clip();const k=STAGES[stageId]&&STAGES[stageId].boss;if(k)sheetDraw(k==='apagao'?'arq':k,(frame>>4)%4,X,by+12,false,{s:k==='apagao'?.13:.19});ctx.restore();
-  if(!L.gateOpen){R(ctx,'rgba(10,13,31,.85)',x0+10,doorTop,wd-20,fl-doorTop);for(let i=0;i<4;i++){const bx=x0+14+i*7;R(ctx,'#5b6380',bx,doorTop,3,fl-doorTop);R(ctx,'#9aa3c4',bx,doorTop,1,fl-doorTop)}
-    R(ctx,C.ink,X-6,doorTop+14,12,10);R(ctx,C.gold,X-5,doorTop+15,10,8);R(ctx,C.ink,X-1,doorTop+17,2,4);ctx.strokeStyle=C.gold;ctx.lineWidth=2;ctx.beginPath();ctx.arc(X,doorTop+14,4,Math.PI,0);ctx.stroke()}
-  else{R(ctx,'rgba(255,240,170,.12)',x0+10,doorTop,wd-20,fl-doorTop);if(!arenaLocked&&(frame>>4)%2){R(ctx,'#5dfc9a',X-2,doorTop+20,8,2);R(ctx,'#5dfc9a',X+4,doorTop+18,2,6)}}}
+  if(!open){R(ctx,'rgba(10,13,31,.85)',x0+10,doorTop,wd-20,fl-doorTop);for(let i=0;i<4;i++){const bx=x0+14+i*7;R(ctx,'#5b6380',bx,doorTop,3,fl-doorTop);R(ctx,'#9aa3c4',bx,doorTop,1,fl-doorTop)}
+    if(!L.gateOpen){R(ctx,C.ink,X-6,doorTop+14,12,10);R(ctx,C.gold,X-5,doorTop+15,10,8);R(ctx,C.ink,X-1,doorTop+17,2,4);ctx.strokeStyle=C.gold;ctx.lineWidth=2;ctx.beginPath();ctx.arc(X,doorTop+14,4,Math.PI,0);ctx.stroke()}}
+  else{R(ctx,'rgba(255,240,170,.12)',x0+10,doorTop,wd-20,fl-doorTop);if((frame>>4)%2){R(ctx,'#5dfc9a',X-2,doorTop+20,8,2);R(ctx,'#5dfc9a',X+4,doorTop+18,2,6)}}}
 
 
 function drawHouse(tsKey,x,yFloor,cols,rows,doorLeft){const img=WORLD_TS[tsKey];const x0=Math.round(x),y0=Math.round(yFloor-rows*T);

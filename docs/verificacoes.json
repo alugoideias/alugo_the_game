@@ -1,0 +1,336 @@
+{
+  "kind": "controlled-function-checks",
+  "stages": {
+    "intro": {
+      "width": 200,
+      "height": 15,
+      "fragments": 20,
+      "checkpoints": [
+        {
+          "x": 3,
+          "fy": 12
+        },
+        {
+          "x": 46,
+          "fy": 12
+        },
+        {
+          "x": 80,
+          "fy": 12
+        },
+        {
+          "x": 114,
+          "fy": 12
+        },
+        {
+          "x": 152,
+          "fy": 12
+        }
+      ],
+      "arena": null,
+      "doors": 1,
+      "lifts": 0,
+      "water": false,
+      "air": false,
+      "floorBelowArena": null
+    },
+    "ruido": {
+      "width": 140,
+      "height": 15,
+      "fragments": 5,
+      "checkpoints": [
+        {
+          "x": 3,
+          "fy": 12
+        },
+        {
+          "x": 36,
+          "fy": 12
+        },
+        {
+          "x": 68,
+          "fy": 12
+        },
+        {
+          "x": 100,
+          "fy": 12
+        }
+      ],
+      "arena": 104,
+      "doors": 0,
+      "lifts": 0,
+      "water": false,
+      "air": false,
+      "floorBelowArena": [
+        "#",
+        "#",
+        "#"
+      ]
+    },
+    "pressa": {
+      "width": 140,
+      "height": 15,
+      "fragments": 5,
+      "checkpoints": [
+        {
+          "x": 3,
+          "fy": 12
+        },
+        {
+          "x": 30,
+          "fy": 12
+        },
+        {
+          "x": 76,
+          "fy": 12
+        },
+        {
+          "x": 100,
+          "fy": 12
+        }
+      ],
+      "arena": 104,
+      "doors": 1,
+      "lifts": 0,
+      "water": true,
+      "air": false,
+      "floorBelowArena": [
+        "#",
+        "#",
+        "#"
+      ]
+    },
+    "silo": {
+      "width": 114,
+      "height": 71,
+      "fragments": 22,
+      "checkpoints": [
+        {
+          "x": 3,
+          "fy": 68
+        },
+        {
+          "x": 64,
+          "fy": 68
+        },
+        {
+          "x": 88,
+          "fy": 12
+        }
+      ],
+      "arena": 92,
+      "doors": 0,
+      "lifts": 1,
+      "water": false,
+      "air": false,
+      "floorBelowArena": [
+        "#",
+        "#",
+        "#"
+      ]
+    },
+    "dona": {
+      "width": 140,
+      "height": 15,
+      "fragments": 7,
+      "checkpoints": [
+        {
+          "x": 12,
+          "fy": 12
+        },
+        {
+          "x": 35,
+          "fy": 12
+        },
+        {
+          "x": 56,
+          "fy": 12
+        },
+        {
+          "x": 100,
+          "fy": 12
+        }
+      ],
+      "arena": 104,
+      "doors": 0,
+      "lifts": 0,
+      "water": false,
+      "air": false,
+      "floorBelowArena": [
+        "#",
+        "#",
+        "#"
+      ]
+    },
+    "torta": {
+      "width": 140,
+      "height": 15,
+      "fragments": 5,
+      "checkpoints": [
+        {
+          "x": 16,
+          "fy": 12
+        },
+        {
+          "x": 44,
+          "fy": 12
+        },
+        {
+          "x": 58,
+          "fy": 12
+        },
+        {
+          "x": 100,
+          "fy": 12
+        }
+      ],
+      "arena": 104,
+      "doors": 1,
+      "lifts": 0,
+      "water": false,
+      "air": true,
+      "floorBelowArena": [
+        "#",
+        "#",
+        "#"
+      ]
+    },
+    "apagao": {
+      "width": 170,
+      "height": 15,
+      "fragments": 8,
+      "checkpoints": [
+        {
+          "x": 3,
+          "fy": 12
+        },
+        {
+          "x": 28,
+          "fy": 12
+        },
+        {
+          "x": 46,
+          "fy": 12
+        },
+        {
+          "x": 66,
+          "fy": 12
+        },
+        {
+          "x": 96,
+          "fy": 12
+        },
+        {
+          "x": 130,
+          "fy": 12
+        }
+      ],
+      "arena": 134,
+      "doors": 1,
+      "lifts": 0,
+      "water": false,
+      "air": false,
+      "floorBelowArena": [
+        "#",
+        "#",
+        "#"
+      ]
+    }
+  },
+  "checks": [
+    {
+      "id": "PRESSA_THROW_SLOW",
+      "normal": {
+        "updates": 35,
+        "projectiles": 4
+      },
+      "slowed": {
+        "updates": 86,
+        "projectiles": 10
+      },
+      "expected": "Ritmo desacelera; não multiplica projéteis do mesmo evento"
+    },
+    {
+      "id": "APAGAO_FLOOR_ERASE",
+      "cells": [
+        [
+          142,
+          12
+        ],
+        [
+          143,
+          12
+        ],
+        [
+          144,
+          12
+        ],
+        [
+          145,
+          12
+        ]
+      ],
+      "columns": [
+        {
+          "x": 142,
+          "removed": ".",
+          "below": "#",
+          "below2": "#"
+        },
+        {
+          "x": 143,
+          "removed": ".",
+          "below": "#",
+          "below2": "#"
+        },
+        {
+          "x": 144,
+          "removed": ".",
+          "below": "#",
+          "below2": "#"
+        },
+        {
+          "x": 145,
+          "removed": ".",
+          "below": "#",
+          "below2": "#"
+        }
+      ],
+      "expected": "Confirmar se o apagamento deveria abrir um buraco ou somente um rebaixo de 16 px"
+    },
+    {
+      "id": "GATE_DURING_FIGHT",
+      "gateOpen": true,
+      "arenaLocked": true,
+      "collisionAtPassage": "W",
+      "drawsBars": false,
+      "lightOpen": true,
+      "expected": "Portão fechado deve mostrar barras/folhas e indicar bloqueio durante o combate"
+    },
+    {
+      "id": "SHOT_BOSS_DAMAGE",
+      "before": 18,
+      "after": 17,
+      "expected": 17
+    },
+    {
+      "id": "SILO_CHECKPOINT_GAP",
+      "checkpoints": [
+        {
+          "x": 3,
+          "fy": 68
+        },
+        {
+          "x": 64,
+          "fy": 68
+        },
+        {
+          "x": 88,
+          "fy": 12
+        }
+      ],
+      "verticalDistanceTiles": 56,
+      "expected": "Avaliar pontos intermediários na subida de 896 px"
+    }
+  ]
+}
