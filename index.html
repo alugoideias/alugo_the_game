@@ -1345,22 +1345,7 @@ function drawPista(cx){const P=L.pista,X=Math.round(P.x*T-cx),Y=12*T;if(X>W+40||
   spr('tp',(frame>>4)%2?'farolete-ligado':'farolete-desligado',X-6,Y-38);spr('tp',(frame>>4)%2?'farolete-ligado':'farolete-desligado',X+P.n*64-18,Y-38);spr('tp','biruta',X+P.n*64-60,Y-46)}
 
 
-// boss gate from atlas 'pg': amber+padlock = missing fragments, green = open, red+bars = sealed for the fight
-function drawBossGate(X){const A=ATL.pg;if(!A||!ready(A.img))return drawBossGateCode(X);X=Math.round(X);
-  const top=L.tall?0:HUD,doorTop=9*T,fl=12*T,x0=X-26,lt=doorTop-14,want=L.gateOpen&&!arenaLocked?1:0;
-  if(L.gateT==null)L.gateT=want;L.gateT+=Math.max(-1/10,Math.min(1/24,want-L.gateT));
-  R(ctx,C.ink,x0-1,top,54,lt-top);ctx.save();ctx.beginPath();ctx.rect(x0,top,52,lt-top);ctx.clip();for(let y=lt-16;y>top-16;y-=16)spr('pg','pilar',X,y,{s:.5});ctx.restore();
-  const by=Math.max(top+26,doorTop-60);R(ctx,'#0e1226',X-12,by-12,24,24);
-  ctx.save();ctx.beginPath();ctx.rect(X-12,by-12,24,24);ctx.clip();const k=STAGES[stageId]&&STAGES[stageId].boss;if(k)sheetDraw(k==='apagao'?'arq':k,(frame>>4)%4,X,by+12,false,{s:k==='apagao'?.13:.19});ctx.restore();spr('pg','retrato',X,by,{s:.5});
-  R(ctx,'rgba(255,240,170,.12)',x0+10,doorTop,32,fl-doorTop-2);
-  const v=Math.round((fl-doorTop)*(1-L.gateT));if(v>0){const [rx,ry,rw,rh]=A.f.folha;ctx.drawImage(A.img,rx,ry+rh-v*2,rw,v*2,x0+10,doorTop,32,v)}
-  if(arenaLocked&&L.gateT<=0)spr('pg','barras-'+((frame>>3)%2),X,fl,{s:.5});
-  spr('pg','moldura',X,fl,{s:.5});
-  const moving=L.gateT>0&&L.gateT<1,lc=arenaLocked?'vermelha':L.gateOpen?'verde':'ambar',on=!moving||(frame>>2)%2,gc={vermelha:'rgba(255,90,90,.7)',ambar:'rgba(255,200,60,.7)',verde:'rgba(93,252,154,.7)'}[lc];
-  for(const lx of [x0+16,x0+36]){if(on)glow(lx,doorTop-6,8,gc,.6+.3*Math.sin(frame*.15));spr('pg','luz-'+(on?lc:'apagada'),lx,doorTop-6,{s:.5})}
-  if(!L.gateOpen)spr('pg','cadeado',X,doorTop+19,{s:.5});
-  else if(L.gateT>=1&&(frame>>4)%2){R(ctx,'#5dfc9a',X-2,doorTop+20,8,2);R(ctx,'#5dfc9a',X+4,doorTop+18,2,6)}}
-function drawBossGateCode(X){X=Math.round(X);const top=L.tall?0:HUD,open=L.gateOpen&&!arenaLocked,doorTop=9*T,fl=12*T,wd=52,x0=X-wd/2;
+function drawBossGate(X){X=Math.round(X);const top=L.tall?0:HUD,open=L.gateOpen&&!arenaLocked,doorTop=9*T,fl=12*T,wd=52,x0=X-wd/2;
   R(ctx,'#0a0d1f',x0-2,top,wd+4,fl-top);
   for(let y=top;y<doorTop;y+=16)for(let i=0;i<3;i++){const bx=x0+i*18-((y>>4)%2)*9;R(ctx,'#3a4160',Math.max(x0,bx)+1,y+1,Math.min(17,x0+wd-Math.max(x0,bx)-1),14);R(ctx,'#5b6380',Math.max(x0,bx)+1,y+1,Math.min(17,x0+wd-Math.max(x0,bx)-1),1)}
   for(const px of [x0,x0+wd-10]){R(ctx,'#232a46',px,top,10,fl-top);for(let y=top;y<fl;y+=12)R(ctx,(y>>2)%2?'#f2b632':'#0a0d1f',px+1,y,8,6)}
@@ -1625,8 +1610,6 @@ ATL['fe']={img:KI('assets/atlas/foco-elo.png'),f:{"tomada-oculta":[0,0,64,64,32,
 const WORLD_TS={'vale-confusao':KI('assets/tiles/vale-confusao.png'),'distrito-prazos':KI('assets/tiles/distrito-prazos.png'),'fortaleza-desconectada':KI('assets/tiles/fortaleza-desconectada.png'),'labirinto-processos':KI('assets/tiles/labirinto-processos.png'),'oficina-rascunhos':KI('assets/tiles/oficina-rascunhos.png'),'arquivo-esquecimento':KI('assets/tiles/arquivo-esquecimento.png')};
 const WORLD_BG={'vale-confusao':KI('assets/fundos/vale-confusao.png'),'distrito-prazos':KI('assets/fundos/distrito-prazos.png'),'fortaleza-desconectada':KI('assets/fundos/fortaleza-desconectada.png'),'labirinto-processos':KI('assets/fundos/labirinto-processos.png'),'oficina-rascunhos':KI('assets/fundos/oficina-rascunhos.png'),'arquivo-esquecimento':KI('assets/fundos/arquivo-esquecimento.png')};
 const TILE_ORDER=["topo-esquerda", "topo-meio-a", "topo-meio-b", "topo-direita", "corpo-esquerda", "corpo-meio-a", "corpo-meio-b", "corpo-direita", "plataforma-esquerda", "plataforma-meio-a", "plataforma-meio-b", "plataforma-direita"];const TILE_RECT=[[0, 0, 16, 16], [16, 0, 16, 16], [32, 0, 16, 16], [48, 0, 16, 16], [0, 16, 16, 16], [16, 16, 16, 16], [32, 16, 16, 16], [48, 16, 16, 16], [0, 32, 16, 16], [16, 32, 16, 16], [32, 32, 16, 16], [48, 32, 16, 16]];
-ATL['pg']={img:KI('assets/atlas/porta-chefe.png'),f:{"pilar":[0,0,104,32,52,0],"moldura":[104,0,104,124,52,124],"folha":[208,0,64,96,32,96],"barras-0":[272,0,64,96,32,96],"barras-1":[336,0,64,96,32,96],"retrato":[400,0,60,60,30,30],"cadeado":[460,0,32,32,16,16],"luz-vermelha":[492,0,12,12,6,6],"luz-ambar":[0,124,12,12,6,6],"luz-verde":[12,124,12,12,6,6],"luz-apagada":[24,124,12,12,6,6]}};
-ATL['pc']={img:KI('assets/atlas/projeteis-chefes.png'),f:{"ponteiro-0":[0,0,32,32,16,16],"ponteiro-1":[32,0,32,32,16,16],"ponteiro-2":[64,0,32,32,16,16],"ponteiro-3":[96,0,32,32,16,16],"relogio-0":[128,0,32,32,16,16],"relogio-1":[160,0,32,32,16,16],"cadeado-0":[192,0,32,32,16,16],"cadeado-1":[224,0,32,32,16,16],"peca-0":[0,32,32,32,16,16],"peca-1":[32,32,32,32,16,16],"arquivo-0":[64,32,32,32,16,16],"arquivo-1":[96,32,32,32,16,16],"vazio-0":[128,32,32,32,16,16],"vazio-1":[160,32,32,32,16,16],"raio-0":[192,32,32,32,16,16],"raio-1":[224,32,32,32,16,16],"foco-0":[0,64,32,32,16,16],"foco-1":[32,64,32,32,16,16],"no-0":[64,64,32,32,16,16],"no-1":[96,64,32,32,16,16]}};
 // draw atlas frame so its anchor lands at (x,y)
 function spr(a,id,x,y,o={}){const A=ATL[a];if(!A||!ready(A.img))return false;const r=A.f[id];if(!r)return false;const [rx,ry,rw,rh,ax,ay]=r,sx=(o.sx||o.s||1),sy=(o.sy||o.s||1);
   ctx.save();ctx.translate(Math.round(x),Math.round(y));if(o.flip)ctx.scale(-1,1);if(o.alpha!=null)ctx.globalAlpha=o.alpha;ctx.drawImage(A.img,rx,ry,rw,rh,-ax*sx,-ay*sy,rw*sx,rh*sy);ctx.restore();return true}
@@ -1866,13 +1849,8 @@ function drawBoss(){const b=boss,cx=Math.round(cam);if(!b)return;if(b.dead&&b.de
   if(b.sonar){ctx.strokeStyle=`rgba(255,120,120,${Math.max(0,.7-b.sonar.r/500)})`;ctx.lineWidth=2;for(let k=0;k<2;k++){const r=b.sonar.r-k*14;if(r>0){ctx.beginPath();ctx.arc(b.sonar.x-cx,b.sonar.y,r,0,Math.PI*2);ctx.stroke()}}}
   if(b.type==='apagao'&&b.phase===2)glow(X+b.w/2,Y+16,20,'rgba(255,200,60,.35)',.5+.3*Math.sin(frame*.1));
 }
-// boss projectiles from atlas 'pc'; falls back to the procedural drawing below
-const PC_SHOT={hand:['ponteiro',4,1],clock:['relogio',2,2,'rgba(127,224,255,.6)'],lock:['cadeado',2,4],piece:['peca',2,4],file:['arquivo',2,2],void:['vazio',2,2,'rgba(255,200,60,.5)'],bolt:['raio',2,1,'rgba(255,240,140,.7)'],focus:['foco',2,2,'rgba(255,90,90,.7)'],knot:['no',2,2,'rgba(255,138,154,.5)']};
-function drawBossShot(m,X,Y){const d=PC_SHOT[m.k];if(!d||(m.k==='bolt'&&m.h>14))return false;const [id,n,sp,gc]=d,cx=X+m.w/2,cy=Y+m.h/2;
-  const f=m.k==='lock'?((frame>>4)%4?0:1):(frame>>(1+sp))%n;if(!ready(ATL.pc.img))return false;if(gc)glow(cx,cy,m.w,gc,.35);return spr('pc',id+'-'+f,cx,cy,{s:.5,flip:m.vx<0})}
 function drawMail(m,cx){const X=Math.round(m.x-cx),Y=Math.round(m.y);
   if(m.delay>0){if(m.k==='brick'&&(frame>>2)%2){R(ctx,'rgba(255,90,60,.55)',X-2,12*T-3,m.w+4,3);R(ctx,'rgba(255,90,60,.35)',X+m.w/2-1,HUD,2,12*T-HUD)}return}
-  if(drawBossShot(m,X,Y))return;
   if(m.k==='sonic'){const d=Math.sign(m.vx);glow(X+7,Y+13,16,'rgba(255,230,140,.45)',.6);ctx.lineWidth=2;for(let i=0;i<3;i++){ctx.strokeStyle=i?'rgba(255,216,74,.8)':'#fff8d0';ctx.beginPath();ctx.arc(X+7-d*i*5,Y+13,8+i*3,d>0?-1:Math.PI-1,d>0?1:Math.PI+1);ctx.stroke()}return}
   if(m.k==='brick'){R(ctx,C.ink,X-1,Y-1,m.w+2,m.h+2);R(ctx,THEME.body[0],X,Y,m.w,m.h);R(ctx,THEME.hi[0],X,Y,m.w,2);R(ctx,THEME.line[0],X,Y+6,m.w,1);R(ctx,THEME.line[0],X+6,Y,1,6);return}
   if(m.k==='zapline'){glow(X+m.w/2,Y+3,Math.min(40,m.w/2+8),'rgba(255,240,150,.5)',.6);zig(X,Y+3,X+m.w,Y+3,'#fff8d0',Math.max(4,Math.round(m.w/10)),7);zig(X,Y+3,X+m.w,Y+3,'rgba(255,216,74,.9)',Math.max(4,Math.round(m.w/12)),5);return}
