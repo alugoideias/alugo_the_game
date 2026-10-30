@@ -1193,19 +1193,25 @@ function mapIsland(cx,cy,w,h,col){const r=10;ctx.fillStyle='#030714';ctx.beginPa
 function renderSelect(){R(ctx,'#050c26',0,0,W,H);
   for(let y=34;y<H;y+=6)for(let x=((y*7)%12)-12;x<W;x+=12){const tw=(x*3+y*5+frame)%160;if(tw<60)R(ctx,tw<30?'#0f2250':'#0b1a40',x+((frame>>3)%12),y,4,1)}
   for(let i=0;i<20;i++){const x=(i*71+frame*.2)%W,y=40+(i*37)%(H-60);if(((frame>>3)+i)%7===0)R(ctx,'#2a5aa0',Math.round(x),y,1,1)}
-  for(const k in MAPN){if(k==='jw'||k==='je')continue;const [x,y]=mxy(k);mapIsland(x,y+4,k==='hub'?92:70,k==='hub'?40:38,MAPCOL[k])}
+  // regions: islands cut from each stage's own background and tiles (atlas 'mp'); paths run underneath
+  const MI=!!(ATL.mp&&ready(ATL.mp.img));
+  if(!MI)for(const k in MAPN){if(k==='jw'||k==='je')continue;const [x,y]=mxy(k);mapIsland(x,y+4,k==='hub'?92:70,k==='hub'?40:38,MAPCOL[k])}
   for(const [a,b] of MAPE){const [x1,y1]=mxy(a),[x2,y2]=mxy(b),d=Math.hypot(x2-x1,y2-y1),n=Math.floor(d/7),lock=(a==='apagao'||b==='apagao')&&!apOpen(),done=save.beaten.includes(a)||save.beaten.includes(b);
-    for(let i=1;i<n;i++){const u=i/n,x=Math.round(x1+(x2-x1)*u),y=Math.round(y1+(y2-y1)*u);R(ctx,'#030714',x-2,y-1,5,4);R(ctx,lock?'#4a5383':done?'#5dfc9a':C.gold,x-2,y-2,4,3)}
-    if(lock){const mx=Math.round((x1+x2)/2),my=Math.round((y1+y2)/2);R(ctx,C.ink,mx-7,my-5,14,12);R(ctx,'#8c94bf',mx-6,my-4,12,10);R(ctx,C.ink,mx-1,my-1,2,4)}}
+    for(let i=1;i<n;i++){const u=i/n,x=Math.round(x1+(x2-x1)*u),y=Math.round(y1+(y2-y1)*u);R(ctx,'#030714',x-2,y-1,5,4);R(ctx,lock?'#4a5383':done?'#5dfc9a':C.gold,x-2,y-2,4,3)}}
+  if(MI)for(const k in MAPN){if(k==='jw'||k==='je')continue;const [x,y]=mxy(k),beat=save.beaten.includes(k);
+    spr('mp',k==='hub'?'hub':k==='apagao'?(!apOpen()?'apagao-lacrado':beat?'apagao-restaurada':'apagao'):beat?k+'-restaurada':k,x,y+(k==='apagao'?8:0),{s:.5})}
+  for(const [a,b] of MAPE)if((a==='apagao'||b==='apagao')&&!apOpen()){const [x1,y1]=mxy(a),[x2,y2]=mxy(b),mx=Math.round((x1+x2)/2),my=Math.round((y1+y2)/2)+(MI?4:0);R(ctx,C.ink,mx-7,my-5,14,12);R(ctx,'#8c94bf',mx-6,my-4,12,10);R(ctx,C.ink,mx-1,my-1,2,4)}
   for(const k in MAPN){const [x,y]=mxy(k);if(k==='jw'||k==='je'){R(ctx,C.ink,x-4,y-4,9,9);R(ctx,C.gold,x-3,y-3,7,7);R(ctx,'#fff3b0',x-3,y-3,7,1);continue}
     const beat=save.beaten.includes(k),sel=k===mapAt&&!mapMove;
     if(k==='hub'){spr('lampadas',apOpen()?'farol-reconstruindo':'farol-quebrado',x,y+10,{s:.42});continue}
     if(sel)glow(x,y,26,'rgba(255,216,74,.5)',.5+.2*Math.sin(frame*.15));
+    if(MI){if(beat){const cx2=x+28,cy2=y-(k==='torta'?26:k==='apagao'?26:42);R(ctx,C.ink,cx2,cy2,11,11);R(ctx,'#5dfc9a',cx2+1,cy2+1,9,9);R(ctx,C.ink,cx2+3,cy2+5,2,2);R(ctx,C.ink,cx2+5,cy2+6,2,2);R(ctx,C.ink,cx2+7,cy2+3,2,4)}}  // the island already shows the place; boss name is in the info panel
+    else{
     panel('card-chefe',x-18,y-18,36,36)||box(x-18,y-18,36,36);
     const lockA=k==='apagao'&&!apOpen();ctx.save();ctx.beginPath();ctx.rect(x-14,y-14,28,28);ctx.clip();if(lockA)ctx.globalAlpha=.3;
     sheetDraw(k==='apagao'?'arq':k,beat?7:(frame>>4)%4,x,y+12,false,{s:k==='apagao'?.16:.24});ctx.restore();ctx.globalAlpha=1;
     if(beat){R(ctx,C.ink,x+7,y-17,11,11);R(ctx,'#5dfc9a',x+8,y-16,9,9);R(ctx,C.ink,x+10,y-12,2,2);R(ctx,C.ink,x+12,y-11,2,2);R(ctx,C.ink,x+14,y-14,2,4)}
-    if(lockA){R(ctx,'#8c94bf',x-5,y-3,10,8);R(ctx,C.ink,x-1,y,2,3);ctx.strokeStyle='#8c94bf';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y-3,3.5,Math.PI,0);ctx.stroke()}
+    if(lockA){R(ctx,'#8c94bf',x-5,y-3,10,8);R(ctx,C.ink,x-1,y,2,3);ctx.strokeStyle='#8c94bf';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y-3,3.5,Math.PI,0);ctx.stroke()}}
     const need=MAPNEED[k];if(need&&!beat)need.forEach((t,i)=>{const own=save.beaten.map(b=>STAGES[b].reward).includes(t);R(ctx,C.ink,x-15+i*12,y+14,11,11);spr('habilidades',SKN[t]+(own?'-ativo':'-inativo'),x-9.5+i*12,y+19.5,{s:.38})})}
   {let ax,ay;if(mapMove){const [x1,y1]=mxy(mapMove.from),[x2,y2]=mxy(mapMove.to);ax=x1+(x2-x1)*mapMove.t;ay=y1+(y2-y1)*mapMove.t}else[ax,ay]=mxy(mapAt);
     const moving=!!mapMove,fl=moving&&mxy(mapMove.to)[0]<mxy(mapMove.from)[0],hop=moving?Math.abs(Math.sin(frame*.3))*3:Math.abs(Math.sin(frame*.08))*1.5;
@@ -1625,6 +1631,7 @@ ATL['fe']={img:KI('assets/atlas/foco-elo.png'),f:{"tomada-oculta":[0,0,64,64,32,
 const WORLD_TS={'vale-confusao':KI('assets/tiles/vale-confusao.png'),'distrito-prazos':KI('assets/tiles/distrito-prazos.png'),'fortaleza-desconectada':KI('assets/tiles/fortaleza-desconectada.png'),'labirinto-processos':KI('assets/tiles/labirinto-processos.png'),'oficina-rascunhos':KI('assets/tiles/oficina-rascunhos.png'),'arquivo-esquecimento':KI('assets/tiles/arquivo-esquecimento.png')};
 const WORLD_BG={'vale-confusao':KI('assets/fundos/vale-confusao.png'),'distrito-prazos':KI('assets/fundos/distrito-prazos.png'),'fortaleza-desconectada':KI('assets/fundos/fortaleza-desconectada.png'),'labirinto-processos':KI('assets/fundos/labirinto-processos.png'),'oficina-rascunhos':KI('assets/fundos/oficina-rascunhos.png'),'arquivo-esquecimento':KI('assets/fundos/arquivo-esquecimento.png')};
 const TILE_ORDER=["topo-esquerda", "topo-meio-a", "topo-meio-b", "topo-direita", "corpo-esquerda", "corpo-meio-a", "corpo-meio-b", "corpo-direita", "plataforma-esquerda", "plataforma-meio-a", "plataforma-meio-b", "plataforma-direita"];const TILE_RECT=[[0, 0, 16, 16], [16, 0, 16, 16], [32, 0, 16, 16], [48, 0, 16, 16], [0, 16, 16, 16], [16, 16, 16, 16], [32, 16, 16, 16], [48, 16, 16, 16], [0, 32, 16, 16], [16, 32, 16, 16], [32, 32, 16, 16], [48, 32, 16, 16]];
+ATL['mp']={img:KI('assets/atlas/mapa-regioes.png'),f:{"ruido":[0,0,162,138,81,97],"ruido-restaurada":[162,0,162,138,81,97],"pressa":[324,0,162,138,81,97],"pressa-restaurada":[486,0,162,138,81,97],"silo":[0,138,162,138,81,97],"silo-restaurada":[162,138,162,138,81,97],"dona":[324,138,162,138,81,97],"dona-restaurada":[486,138,162,138,81,97],"torta":[0,276,162,106,81,65],"torta-restaurada":[162,276,162,106,81,65],"apagao-lacrado":[324,276,162,122,81,81],"apagao":[486,276,162,122,81,81],"apagao-restaurada":[0,398,162,122,81,81],"hub":[162,398,192,40,96,-20]}};
 ATL['pg']={img:KI('assets/atlas/porta-chefe.png'),f:{"pilar":[0,0,104,32,52,0],"moldura":[104,0,104,124,52,124],"folha":[208,0,64,96,32,96],"barras-0":[272,0,64,96,32,96],"barras-1":[336,0,64,96,32,96],"retrato":[400,0,60,60,30,30],"cadeado":[460,0,32,32,16,16],"luz-vermelha":[492,0,12,12,6,6],"luz-ambar":[0,124,12,12,6,6],"luz-verde":[12,124,12,12,6,6],"luz-apagada":[24,124,12,12,6,6]}};
 ATL['pc']={img:KI('assets/atlas/projeteis-chefes.png'),f:{"ponteiro-0":[0,0,32,32,16,16],"ponteiro-1":[32,0,32,32,16,16],"ponteiro-2":[64,0,32,32,16,16],"ponteiro-3":[96,0,32,32,16,16],"relogio-0":[128,0,32,32,16,16],"relogio-1":[160,0,32,32,16,16],"cadeado-0":[192,0,32,32,16,16],"cadeado-1":[224,0,32,32,16,16],"peca-0":[0,32,32,32,16,16],"peca-1":[32,32,32,32,16,16],"arquivo-0":[64,32,32,32,16,16],"arquivo-1":[96,32,32,32,16,16],"vazio-0":[128,32,32,32,16,16],"vazio-1":[160,32,32,32,16,16],"raio-0":[192,32,32,32,16,16],"raio-1":[224,32,32,32,16,16],"foco-0":[0,64,32,32,16,16],"foco-1":[32,64,32,32,16,16],"no-0":[64,64,32,32,16,16],"no-1":[96,64,32,32,16,16]}};
 // draw atlas frame so its anchor lands at (x,y)
